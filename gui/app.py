@@ -4,12 +4,13 @@ gui/app.py  —  Ventana principal del Organizador de Archivos.
 import logging
 import tkinter as tk
 
-from config import BG, SURFACE, ACCENT, TEXT_DIM, SANS
-from gui.widgets         import GUILogHandler
-from gui.panel_carpeta   import PanelCarpetaMixin
-from gui.panel_ignoradas import PanelIgnoradasMixin
-from gui.panel_controles import PanelControlesMixin
-from gui.panel_log       import PanelLogMixin
+from config import BG, SURFACE, SURFACE2, ACCENT, TEXT_DIM, SANS
+from gui.widgets             import GUILogHandler, FlatButton
+from gui.panel_carpeta       import PanelCarpetaMixin
+from gui.panel_ignoradas     import PanelIgnoradasMixin
+from gui.panel_controles     import PanelControlesMixin
+from gui.panel_log           import PanelLogMixin
+from gui.panel_configuracion import PanelConfiguracionMixin
 
 
 class OrganizadorApp(
@@ -17,6 +18,7 @@ class OrganizadorApp(
     PanelIgnoradasMixin,
     PanelControlesMixin,
     PanelLogMixin,
+    PanelConfiguracionMixin,
     tk.Tk,
 ):
     def __init__(self):
@@ -61,6 +63,12 @@ class OrganizadorApp(
             frame, text="ORGANIZADOR",
             font=(SANS, 9, "bold"), fg=ACCENT, bg=BG,
         ).pack(side="left")
+
+        FlatButton(
+            frame, text="⚙ Configuración",
+            command=self._abrir_configuracion,
+            bg=SURFACE, fg=TEXT_DIM, hover=SURFACE2,
+        ).pack(side="right", padx=(8, 0), ipadx=10, ipady=4)
 
         self.dot = tk.Label(frame, text="●", font=(SANS, 10), fg=TEXT_DIM, bg=BG)
         self.dot.pack(side="right")

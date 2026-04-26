@@ -78,3 +78,6 @@ CARPETAS_SISTEMA: set[str] = {
 }
 
 CARPETAS_IGNORADAS: set[str] = set()
+
+# ── Config dinámica ──────────────────
+CARPETAS_IGNORADAS: set[str] = set()
