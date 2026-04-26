@@ -8,7 +8,7 @@ import time
 import mimetypes
 import logging
 
-from config import TIPOS_ARCHIVOS, EXTENSIONES_TEMP
+from config import EXTENSIONES_TEMP
 import config_manager
 
 logger = logging.getLogger(__name__)
@@ -41,16 +41,11 @@ def resolver_duplicado(ruta_destino: str) -> str:
 #   CLASIFICACIÓN
 # ─────────────────────────────────────
 def carpeta_correcta(archivo: str) -> str:
-    """
-    Devuelve la subcarpeta de destino relativa para `archivo`,
-    usando la extensión primero y el MIME type como fallback.
-    """
-    tipos = config_manager.obtener_tipos
+    import config_manager
+    tipos = config_manager.obtener_tipos()
     ext = os.path.splitext(archivo)[1].lower()
-
-    if ext in TIPOS_ARCHIVOS:
-        return TIPOS_ARCHIVOS[ext]
-
+    if ext in tipos:
+        return tipos[ext]
     tipo, _ = mimetypes.guess_type(archivo)
     if tipo:
         if "image" in tipo: return "Imagenes/Otros"
@@ -58,9 +53,7 @@ def carpeta_correcta(archivo: str) -> str:
         if "audio" in tipo: return "Audio"
         if "pdf"   in tipo: return "Documentos/PDF"
         if "text"  in tipo: return "Documentos/Texto"
-
     return "Otros"
-
 
 # ─────────────────────────────────────
 #   VERIFICACIÓN DE ARCHIVO LISTO

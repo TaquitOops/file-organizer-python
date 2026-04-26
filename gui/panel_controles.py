@@ -2,6 +2,7 @@ import os
 import time
 import threading
 import tkinter as tk
+import config_manager
 from watchdog.observers import Observer
 from config import BG, SURFACE, SURFACE2, GREEN, RED, YELLOW, TEXT, TEXT_DIM, SANS
 from logic import ordenar_archivo, corregir_clasificacion
@@ -55,7 +56,15 @@ class PanelControlesMixin:
             self._iniciar()
 
     def _iniciar(self) -> None:
+        
         carpeta = self.carpeta_actual.get().strip()
+
+        # Si no hay carpeta, intentar cargar la del perfil activo
+        if not carpeta:
+            carpeta = config_manager.obtener_carpeta_raiz() or ""
+            if carpeta:
+                self.carpeta_actual.set(carpeta)
+
         if not carpeta:
             self._log("ERROR", "Selecciona una carpeta primero.")
             return

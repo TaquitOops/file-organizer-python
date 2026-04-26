@@ -1,51 +1,92 @@
 """
-config_manager.py — Maneja la persistencia del mapeo extensión → carpeta.
-Lee config_usuario.json si existe, si no usa los defaults de config.py.
+config_manager.py — Maneja perfiles de configuración con persistencia en JSON.
 """
 import json
 import os
-from config import TIPOS_ARCHIVOS as _DEFAULTS
 
-CONFIG_PATH = os.path.join(os.path.dirname(__file__), "config_usuario.json")
-
-
-def _invertir(tipos: dict[str, str]) -> dict[str, list[str]]:
-    """Convierte {'.pdf': 'Documentos/PDF'} → {'Documentos/PDF': ['.pdf']}"""
-    resultado: dict[str, list[str]] = {}
-    for ext, carpeta in tipos.items():
-        resultado.setdefault(carpeta, []).append(ext)
-    return resultado
+PERFILES_PATH = os.path.join(os.path.dirname(__file__), "perfiles.json")
 
 
-def _aplanar(mapa: dict[str, list[str]]) -> dict[str, str]:
-    """Convierte {'Documentos/PDF': ['.pdf']} → {'.pdf': 'Documentos/PDF'}"""
+def _cargar_json() -> dict:
+    with open(PERFILES_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _guardar_json(data: dict) -> None:
+    with open(PERFILES_PATH, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+
+# ── Perfiles ─────────────────────────────────────────────────
+
+def listar_perfiles() -> list[str]:
+    return list(_cargar_json()["perfiles"].keys())
+
+
+def obtener_perfil(nombre: str) -> dict:
+    return _cargar_json()["perfiles"].get(nombre, {})
+
+
+def guardar_perfil(nombre: str, carpeta_raiz: str | None, mapa: dict[str, list[str]]) -> None:
+    data = _cargar_json()
+    data["perfiles"][nombre] = {
+        "carpeta_raiz": carpeta_raiz,
+        "mapa": mapa,
+    }
+    _guardar_json(data)
+
+
+def eliminar_perfil(nombre: str) -> None:
+    data = _cargar_json()
+    data["perfiles"].pop(nombre, None)
+    if data["perfil_activo"] == nombre:
+        data["perfil_activo"] = None
+    _guardar_json(data)
+
+
+def duplicar_perfil(origen: str, destino: str) -> None:
+    data = _cargar_json()
+    if origen in data["perfiles"]:
+        data["perfiles"][destino] = json.loads(
+            json.dumps(data["perfiles"][origen])
+        )
+    _guardar_json(data)
+
+
+# ── Perfil activo ─────────────────────────────────────────────
+
+def obtener_perfil_activo() -> str | None:
+    return _cargar_json().get("perfil_activo")
+
+
+def establecer_perfil_activo(nombre: str | None) -> None:
+    data = _cargar_json()
+    data["perfil_activo"] = nombre
+    _guardar_json(data)
+
+
+# ── Mapa plano para logic.py ──────────────────────────────────
+
+def obtener_tipos() -> dict[str, str]:
+    """Devuelve {ext: carpeta} del perfil activo. Vacío si no hay perfil."""
+    data = _cargar_json()
+    activo = data.get("perfil_activo")
+    if not activo:
+        return {}
+    mapa = data["perfiles"].get(activo, {}).get("mapa", {})
     return {ext: carpeta for carpeta, exts in mapa.items() for ext in exts}
 
 
-def cargar() -> dict[str, list[str]]:
-    """Devuelve el mapa carpeta → [extensiones] desde JSON o desde defaults."""
-    if os.path.exists(CONFIG_PATH):
-        try:
-            with open(CONFIG_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception:
-            pass
-    return _invertir(_DEFAULTS)
+def obtener_carpeta_raiz() -> str | None:
+    """Devuelve la carpeta raíz del perfil activo."""
+    data = _cargar_json()
+    activo = data.get("perfil_activo")
+    if not activo:
+        return None
+    return data["perfiles"].get(activo, {}).get("carpeta_raiz")
 
 
-def guardar(mapa: dict[str, list[str]]) -> None:
-    """Guarda el mapa en config_usuario.json."""
-    with open(CONFIG_PATH, "w", encoding="utf-8") as f:
-        json.dump(mapa, f, indent=2, ensure_ascii=False)
+# ── Catálogo ──────────────────────────────────────────────────
 
-
-def restaurar() -> dict[str, list[str]]:
-    """Borra el JSON y devuelve los defaults."""
-    if os.path.exists(CONFIG_PATH):
-        os.remove(CONFIG_PATH)
-    return _invertir(_DEFAULTS)
-
-
-def obtener_tipos() -> dict[str, str]:
-    """Devuelve el mapa plano {ext: carpeta} listo para usar en logic.py."""
-    return _aplanar(cargar())
+def obtener_catalogo() -> dict[str, list[str]]:
+    return _cargar_json().get("catalogo", {})

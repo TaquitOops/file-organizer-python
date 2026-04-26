@@ -1,0 +1,94 @@
+{
+  "perfil_activo": "si",
+  "perfiles": {
+    "si": {
+      "carpeta_raiz": null,
+      "mapa": {}
+    }
+  },
+  "catalogo": {
+    "Documentos": [
+      ".pdf",
+      ".docx",
+      ".doc",
+      ".odt",
+      ".rtf",
+      ".txt",
+      ".md",
+      ".xlsx",
+      ".xls",
+      ".csv",
+      ".pptx",
+      ".ppt",
+      ".xml",
+      ".json"
+    ],
+    "Imagenes": [
+      ".jpg",
+      ".jpeg",
+      ".png",
+      ".webp",
+      ".bmp",
+      ".tiff",
+      ".gif",
+      ".svg",
+      ".ico",
+      ".psd",
+      ".ai"
+    ],
+    "Videos": [
+      ".mp4",
+      ".mkv",
+      ".avi",
+      ".mov",
+      ".webm",
+      ".flv",
+      ".wmv",
+      ".3gp"
+    ],
+    "Audio": [
+      ".mp3",
+      ".wav",
+      ".flac",
+      ".ogg",
+      ".m4a",
+      ".aac",
+      ".wma",
+      ".opus"
+    ],
+    "Codigo": [
+      ".py",
+      ".js",
+      ".ts",
+      ".html",
+      ".css",
+      ".java",
+      ".cpp",
+      ".c",
+      ".cs",
+      ".php",
+      ".sql"
+    ],
+    "Comprimidos": [
+      ".zip",
+      ".rar",
+      ".7z",
+      ".tar",
+      ".gz",
+      ".iso"
+    ],
+    "Programas": [
+      ".exe",
+      ".msi",
+      ".dmg",
+      ".deb",
+      ".rpm"
+    ],
+    "Fuentes": [
+      ".ttf",
+      ".otf",
+      ".woff",
+      ".woff2"
+    ]
+  }
+}
