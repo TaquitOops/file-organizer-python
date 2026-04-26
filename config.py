@@ -76,3 +76,5 @@ CARPETAS_SISTEMA: set[str] = {
     "Documentos", "Imagenes", "Videos", "Audio",
     "Comprimidos", "Programas", "Codigo", "Fuentes",
 }
+
+CARPETAS_IGNORADAS: set[str] = set()

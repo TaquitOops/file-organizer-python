@@ -8,7 +8,7 @@ import logging
 
 from watchdog.events import FileSystemEventHandler
 
-from config import EXTENSIONES_TEMP, CARPETAS_SISTEMA
+from config import EXTENSIONES_TEMP, CARPETAS_SISTEMA, CARPETAS_IGNORADAS
 from logic  import ordenar_archivo
 
 logger = logging.getLogger(__name__)
@@ -81,6 +81,9 @@ class Monitor(FileSystemEventHandler):
 
             # Si ya está en una carpeta del sistema, ignorar
             if len(partes) > 1 and partes[0] in CARPETAS_SISTEMA:
+                return
+            
+            if len(partes) > 1 and partes[0] in CARPETAS_IGNORADAS:
                 return
 
             ordenar_archivo(ruta, self._carpeta, self._log_fn)
